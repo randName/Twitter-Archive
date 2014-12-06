@@ -11,9 +11,9 @@ var Grailbird = function (type, date, data) {
 // change the mustache tag delimiters so that it will leave the runtime variables alone
 //
   var templates = {
-    empty_hour: Hogan.compile('<li class="without-tweets" title="" rel="tooltip" data-placement="bottom" data-date="" data-count="0"><span class="value">{{hour}}</span></li>'),
-    hour_bar: Hogan.compile('<li><a href="#" class="with-tweets" title="{{str_title}}: {{str_count}}" rel="tooltip" data-placement="bottom" data-idx="{{data_idx}}" data-date="{{str_title}}" data-count="{{this_count}}"><span class="bar" style="height: {{this_height}}%;"></span><span class="value">{{hour}}</span></a></li>'),
-    # header_str: Hogan.compile('{{title_str}} <span class="count">{{tweet_count}}</span>'),
+    empty_hour: Hogan.compile('<li class="without-tweets" title="" rel="tooltip" data-placement="bottom" data-date="" data-count="0"><span class="value">{{this_hour}}</span></li>'),
+    hour_bar: Hogan.compile('<li><a href="#" class="with-tweets" title="{{str_title}}: {{str_count}}" rel="tooltip" data-placement="bottom" data-idx="{{data_idx}}" data-date="{{str_title}}" data-count="{{this_count}}"><span class="bar" style="height: {{this_height}}%;"></span><span class="value">{{this_hour}}</span></a></li>'),
+    // header_str: Hogan.compile('{{title_str}} <span class="count">{{tweet_count}}</span>'),
     header_str: Hogan.compile('{{title_str}} <span class="count">{{count}} {{content_type}}</span>'),
     nav_tab: Hogan.compile('<li class="{{sectionClass}}"><a href="#">{{sectionName}}</a></li>'),
     singular_tweet_count: Hogan.compile('{{count}} Tweet'),
@@ -164,62 +164,64 @@ var Grailbird = function (type, date, data) {
         var temp_date = new Date();
         var months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ],
             self = this,
-            $month_chart = $('<div class="histogram"><h3></h3><ol class="hours unstyled"></ol></div>'),
-            $month_chart_clone,
-            month_bar = [],
-            year_curr;
+            $day_chart = $('<div class="histogram"><h3></h3><ol class="hours unstyled"></ol></div>'),
+            $day_chart_clone,
+            hour_bar = [],
+            day_curr;
 
         $('.content-nav').empty();
         var hour_count_max = _.max(this.status_index, function (hour) {return hour['tweet_count'];}),
-            renderMonth = function() {
-              if ($month_chart_clone) {
+            renderDay = function() {
+              if ($day_chart_clone) {
                 hour_bar = hour_bar.reverse();
                 if (hour_bar.length < 24) {
                   for (var h = 0; h < 24; h++) {
-                    if (!hour_bar[h] || hour_bar[h].match(/class="value">(\d+)<\/span>/)[1] != h+1) {
-                      hour_bar.splice(h,0,templates.empty_hour.render({this_hour : h+1}));
+                    if (!hour_bar[h] || hour_bar[h].match(/class="value">(\d+)<\/span>/)[1] != h) {
+                       hour_bar.splice(h,0,templates.empty_hour.render({this_hour:h}));
                     }
                   }
                 }
-                $month_chart_clone.find('.hours').append(hour_bar.join(''));
+                $day_chart_clone.find('.hours').append(hour_bar.join(''));
               }
             };
 
         for (var i = 0, l = this.status_index.length; i < l; i++) {
           status_file = this.status_index[i];
-          temp_date.setUTCFullYear(status_file.year, status_file.month - 1, 15);
-          var title_str = date_formatter.format(temp_date, {"format": "additional", "type": "yMMMd"});
+          temp_date.setUTCFullYear(status_file.year, status_file.month - 1, status_file.day - 1);
+          var day_str = date_formatter.format(temp_date, {"format": "additional", "type": "yMMMd"});
+          var title_str = (status_file.hour<10?"0":"") + status_file.hour + "00h — " + day_str;
           count = number_formatter.format(status_file.tweet_count);
           var count_str = status_file.tweet_count > 1 ?
                             templates.plural_tweet_count.render({"count" : count}) :
                             templates.singular_tweet_count.render({"count" : count});
           var hour_index = {
                 this_year: status_file.year,
-                this_month: status_file.month - 1, // combat lazy storage
+                this_month: status_file.month,
 		this_day: status_file.day,
 		this_hour: status_file.hour,
                 this_count: count,
-                this_height: (status_file.tweet_count / month_count_max.tweet_count) * 100,
+                this_height: (status_file.tweet_count / hour_count_max.tweet_count) * 100,
                 str_title: title_str,
+		str_day: day_str,
                 str_count: count_str,
                 data_idx: i
               };
 
           status_file.title_str = title_str;
 
-          if (status_file.month !== month_curr) {
-            renderMonth();
+          if (status_file.day !== day_curr) {
+            renderDay();
 
-            $month_chart_clone = $month_chart.clone();
+            $day_chart_clone = $day_chart.clone();
             hour_bar = [];
 
-            $month_chart_clone.find('h3').text(hour_index.this_month);
-            $('.content-nav').append($month_chart_clone);
-            month_curr = hour_index.this_month;
+            $day_chart_clone.find('h3').text(hour_index.str_day);
+            $('.content-nav').append($day_chart_clone);
+            day_curr = hour_index.this_day;
           }
           hour_bar.push(templates.hour_bar.render(hour_index));
         }
-        renderMonth();
+        renderDay();
 
         $('.hours .with-tweets').tooltip().click(function() {
           self.displayTweets(Number($(this).attr('data-idx')));
@@ -263,7 +265,7 @@ var Grailbird = function (type, date, data) {
               });
             };
 
-        if (tweet_hour.month === undefined) {
+        if (tweet_hour.day === undefined) {
           timeline_options.showActions = false;
         } else {
           $('.hours .with-tweets, .histogram').removeClass('active');
