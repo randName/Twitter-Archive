@@ -6,7 +6,9 @@ var Grailbird = function (type, date, data) {
 (function(exports) {
   "use strict";
 
-  var User = {}, Tweets = {}, mixins = {};
+  var User = {},
+      Tweets = {},
+      mixins = {};
 
 // change the mustache tag delimiters so that it will leave the runtime variables alone
 //
@@ -22,7 +24,8 @@ var Grailbird = function (type, date, data) {
 
   exports.init = function () {
     Grailbird.localizeStrings();
-    var doc = $(document), header = $('.tweets-header');
+    var doc = $(document),
+        header = $('.tweets-header');
 
     twt.settings.showLocalTimes = true;
     twt.settings.showRelativeTimes = true;
@@ -132,7 +135,11 @@ var Grailbird = function (type, date, data) {
   };
 
   exports.extend = function (obj) {
-    var args = Array.prototype.slice.call(arguments, 1), i = 0, l = args.length, prop, source;
+    var args = Array.prototype.slice.call(arguments, 1),
+        i = 0,
+        l = args.length,
+        prop,
+        source;
 
     for (i; i < l; i++) {
       source = args[i];
@@ -403,40 +410,6 @@ jQuery.fn.highlight = function (str, class_name) {
     });
   });
 };
-
-(function($){
-$.fn.touchwipe = function(settings) {
-        var config = { min_move_x: 200, preventDefaultEvents: false };
-        if (settings) $.extend(config, settings);
-
-        this.each(function() {
-                var startX; var isMoving = false;
-
-                 function cancelTouch() {
-                        this.removeEventListener('touchmove',onTouchMove);
-                        startX=null; isMoving=false;
-                 }
-
-                 function onTouchMove(e) {
-                        if(isMoving) {
-                                var x = e.touches[0].pageX; var dx = startX - x;
-                                if(Math.abs(dx) >= config.min_move_x) {
-                                        cancelTouch();
-                                        if(dx>0){config.wipeLeft();}else{config.wipeRight();}
-                                }
-                        }
-                }
-
-                function onTouchStart(e)
-                {
-                        if (e.touches.length == 1) {
-                                 startX = e.touches[0].pageX; isMoving = true;
-                                 this.addEventListener('touchmove', onTouchMove, false);
-                        }
-                }
-                this.addEventListener('touchstart', onTouchStart, false);
-     });
-return this; }; })(jQuery);
 
 $(document).ready(function(){
   Grailbird.init();
