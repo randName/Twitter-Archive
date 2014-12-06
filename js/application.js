@@ -13,8 +13,7 @@ var Grailbird = function (type, date, data) {
   var templates = {
     empty_hour: Hogan.compile('<li class="without-tweets" title="" rel="tooltip" data-placement="bottom" data-date="" data-count="0"><span class="value">{{this_hour}}</span></li>'),
     hour_bar: Hogan.compile('<li><a href="#" class="with-tweets" title="{{str_title}}: {{str_count}}" rel="tooltip" data-placement="bottom" data-idx="{{data_idx}}" data-date="{{str_title}}" data-count="{{this_count}}"><span class="bar" style="height: {{this_height}}%;"></span><span class="value">{{this_hour}}</span></a></li>'),
-    // header_str: Hogan.compile('{{title_str}} <span class="count">{{tweet_count}}</span>'),
-    header_str: Hogan.compile('{{title_str}} <span class="count">{{count}} {{content_type}}</span>'),
+    header_str: Hogan.compile('{{title_str}} <span class="count">{{tweet_count}}</span>'),
     nav_tab: Hogan.compile('<li class="{{sectionClass}}"><a href="#">{{sectionName}}</a></li>'),
     singular_tweet_count: Hogan.compile('{{count}} Tweet'),
     plural_tweet_count: Hogan.compile('{{count}} Tweets')
@@ -187,7 +186,7 @@ var Grailbird = function (type, date, data) {
 
         for (var i = 0, l = this.status_index.length; i < l; i++) {
           status_file = this.status_index[i];
-          temp_date.setUTCFullYear(status_file.year, status_file.month - 1, status_file.day - 1);
+          temp_date.setUTCFullYear(status_file.year, status_file.month - 1, status_file.day);
           var day_str = date_formatter.format(temp_date, {"format": "additional", "type": "yMMMd"});
           var title_str = (status_file.hour<10?"0":"") + status_file.hour + "00h — " + day_str;
           count = number_formatter.format(status_file.tweet_count);
