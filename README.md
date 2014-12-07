@@ -9,5 +9,5 @@ To run:
 
     ttytter -exts=main.pl -ssh -daemon -dmpause=0
     
-    [ in a screen ]
-    while true; do ./generate_js.sh && sleep 900; done
+    [ in a screen. change 900 to your desired display refresh interval ]
+    while true; do sh/generate_js.sh && sleep 900; done
