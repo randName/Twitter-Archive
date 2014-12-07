@@ -14,13 +14,13 @@ my $rdfopts = RDF::RDFa::Parser::Config->tagsoup;
 
 if ( $src eq 'pixiv' ){
 	my $pimg = RDF::RDFa::Parser->new_from_url($url,$rdfopts)->opengraph('image');
-	print `./pixiv.sh $pimg`;
+	print `./sh/pixiv.sh $pimg`;
 } elsif ( $src eq 'tumblr' ){
 	if ( $url =~ m{(tumblr\.com)/?$} ){  } else {
 		print join(" ",RDF::RDFa::Parser->new_from_url($url,$rdfopts)->opengraph('image'));
 	}
 } elsif ( ( $src eq 'imgur' ) or ( $src eq 'twitpic' ) ){
-	print `./ogp.sh $url`;
+	print `./sh/ogp.sh $url`;
 } else {
 	print join(" ",RDF::RDFa::Parser->new_from_url($url,$rdfopts)->opengraph('image'));
 }
