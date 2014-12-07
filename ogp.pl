@@ -15,9 +15,11 @@ my $rdfopts = RDF::RDFa::Parser::Config->tagsoup;
 if ( $src eq 'pixiv' ){
 	my $pimg = RDF::RDFa::Parser->new_from_url($url,$rdfopts)->opengraph('image');
 	print `./sh/pixiv.sh $pimg`;
-} elsif ( $src eq 'tumblr' ){
-	if ( $url =~ m{(tumblr\.com)/?$} ){  } else {
-		print join(" ",RDF::RDFa::Parser->new_from_url($url,$rdfopts)->opengraph('image'));
+} elsif ( ( $src eq 'tumblr' ) or ( $src eq 'tmblr.co' ) ){
+	if ( $url !~ m{(tumblr\.com)/?$} ){
+		print join(" ",
+		grep { $_ !~ m{assets.tumblr.com} } RDF::RDFa::Parser->new_from_url($url,$rdfopts)->opengraph('image')
+		);
 	}
 } elsif ( ( $src eq 'imgur' ) or ( $src eq 'twitpic' ) ){
 	print `./sh/ogp.sh $url`;
