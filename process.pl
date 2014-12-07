@@ -20,6 +20,10 @@
 			my $r = '"'.$_.'":'.$ref->{'user'}->{$_}; $uj =~ s/}$/,$r}/;
 		}
 
+		if ( exists $ref->{'extended_entities'} ){
+			@{$ref->{'entities'}->{'media'}} = @{$ref->{'extended_entities'}->{'media'}};
+		}
+
 		my $ej = entity_handler( $ref->{'entities'}, $u_media );
 		my $tj = encode_json( \%twt ); $tj =~ s/}$/,"entities":$ej,"user":$uj}/;
 
