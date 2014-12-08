@@ -54,7 +54,7 @@
 				$murl = $_->{'expanded_url'};
 			} else {
 				my $eurl = &descape( $_->{'expanded_url'} );
-				$murl = `./ogp.pl "$eurl"`;
+				$murl = `./ogp.py "$eurl"`;
 			}
 
 			if ( $murl ne '' ){
