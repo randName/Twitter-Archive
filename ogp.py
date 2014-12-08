@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 def ogimage(doc):
 	ogs = doc.html.head.find_all(property='og:image')
-	return [ og[u'content'] for og in ogs ]
+	return [ og[u'content'] for og in ogs if og.has_attr(u'content') ]
 
 if len(sys.argv) < 2 :
 	sys.stderr.write('No URL?\n')
@@ -20,7 +20,9 @@ output = ' '.join(ogimage(doc))
 
 twt = {}
 ogs = doc.html.head.find_all(attrs={'name':re.compile(r'^twitter')})
-for og in ogs: twt[og[u'name'][8:]]=og[u'content']
+for og in ogs:
+	if og.has_attr(u'content'):
+		twt[og[u'name'][8:]]=og[u'content']
 
 if 'card' in twt:
 	if twt['card'] == 'photo':
