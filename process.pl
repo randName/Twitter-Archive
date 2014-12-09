@@ -58,9 +58,12 @@
 			}
 
 			if ( $murl ne '' ){
-				my %nm; @nm{@mdk} = @{$_}{@mdk}; my $tm = encode_json( \%nm );
-				$tm =~ s/}$/,"media_url":"$murl","type":"photo"}/;
-				$mj =~ s/\]$/$tm,\]/; $_->{'url'} = '';
+				foreach my $ml (split(/ /,$murl)){
+					my %nm; @nm{@mdk} = @{$_}{@mdk}; my $tm = encode_json( \%nm );
+					$tm =~ s/}$/,"media_url":"$ml","type":"photo"}/;
+					$mj =~ s/\]$/$tm,\]/;
+				}
+				$_->{'url'} = '';
 			}
 		}
 
