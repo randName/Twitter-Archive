@@ -19,7 +19,12 @@ class RedirectHandler(urllib2.HTTPRedirectHandler):
 opener = urllib2.build_opener(RedirectHandler())
 
 url = sys.argv[1]
-html = urllib2.urlopen(url)
+try:
+	html = opener.open(url)
+except urllib2.HTTPError:
+	sys.stderr.write('HTTP Error\n')
+	exit(1)
+#html = urllib2.urlopen(url)
 doc = BeautifulSoup(html)
 
 output = ' '.join(ogimage(doc))
