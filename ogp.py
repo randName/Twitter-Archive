@@ -12,6 +12,12 @@ if len(sys.argv) < 2 :
 	sys.stderr.write('No URL?\n')
 	exit(1)
 
+class RedirectHandler(urllib2.HTTPRedirectHandler):
+	max_repeats = 3
+	max_redirections = 4
+
+opener = urllib2.build_opener(RedirectHandler())
+
 url = sys.argv[1]
 html = urllib2.urlopen(url)
 doc = BeautifulSoup(html)
