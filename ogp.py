@@ -60,5 +60,8 @@ if 'pixiv' in url:
 			imgf.write(image.read())
 	output = 'http://na.randna.me/pixiv/'+fn
 
+if 'pbs.twimg.com/profile_images' in output:
+	output = ''
+
 if output:
 	sys.stdout.write(output)
