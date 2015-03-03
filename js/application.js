@@ -156,7 +156,20 @@ var Grailbird = function (type, date, data) {
     exports.base = {
       init: function () {
         this.buildNavigation();
-        this.displayTweets(0);
+        this.displayTweets(this.getPosition());
+      },
+      getPosition: function() {
+        if(typeof(Storage) !== "undefined") {
+          var pos = localStorage.getItem("position");
+          if ( pos !== null ) {
+            var s_index = $.map(this.status_index, function(e,i){ if( e.var_name == pos ) return i; });
+            if( s_index.length == 1 ) { return s_index[0]; }
+          }
+	}
+	return 0;
+      },
+      setPosition: function(i) {
+        if(typeof(Storage) !== "undefined") { localStorage.setItem("position", i); }
       },
       buildNavigation: function () {
         // Note: Every DOM element constructed in this function must be removed and reinitialized as this
@@ -270,6 +283,8 @@ var Grailbird = function (type, date, data) {
                 $(this).fadeIn(100);
               });
             };
+
+        this.setPosition(tweet_array_name);
 
         if (tweet_hour.day === undefined) {
           timeline_options.showActions = false;
