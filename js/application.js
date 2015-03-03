@@ -160,7 +160,7 @@ var Grailbird = function (type, date, data) {
       },
       getPosition: function() {
         if(typeof(Storage) !== "undefined") {
-          var pos = localStorage.getItem("position");
+          var pos = localStorage.getItem( window.location.pathname + "/position" );
           if ( pos !== null ) {
             var s_index = $.map(this.status_index, function(e,i){ if( e.var_name == pos ) return i; });
             if( s_index.length == 1 ) { return s_index[0]; }
@@ -169,7 +169,7 @@ var Grailbird = function (type, date, data) {
 	return 0;
       },
       setPosition: function(i) {
-        if(typeof(Storage) !== "undefined") { localStorage.setItem("position", i); }
+        if(typeof(Storage) !== "undefined") { localStorage.setItem(window.location.pathname+"/position", i); }
       },
       buildNavigation: function () {
         // Note: Every DOM element constructed in this function must be removed and reinitialized as this
